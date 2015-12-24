@@ -51,6 +51,7 @@
 		<cfargument name="objectList" type="array" required="false" default="#arrayNew(1)#" />
 		<cfargument name="debuggingMode" type="string" required="false" default="#arguments.Result.getDebuggingMode()#" />
 		<cfargument name="ignoreMissingProperties" type="boolean" required="false" default="false" />
+		<cfargument name="ignoreMissingValues" type="boolean" required="false" default="false" />
 		<cfargument name="locale" type="string" required="false" default="#variables.defaultLocale#" />
 		<cfargument name="injectResultIntoBO" type="boolean" default="#variables.injectResultIntoBO#" />
 
@@ -80,6 +81,8 @@
 						<cfset theVal.load(v) />
 						<!--- we only need to check if the property exists if the validation type IS NOT custom --->
 						<cfif v.ValType EQ "custom" OR theVal.propertyExists()>
+							<!--- Ignore missing --->				
+							<cfif arguments.ignoreMissingValues && !arguments.theObject.evaluateExpression("structKeyExists(variables, '#v.propertyName#')")><cfcontinue></cfif>
 							<cfset conditionPasses = true />
 							<!--- Deal with various conditions --->
 							<cfif StructKeyExists(v.Condition,"ServerTest")>
